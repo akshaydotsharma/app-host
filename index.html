@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your personal app dashboard - all your tools in one place.">
+    <title>Your Apps</title>
+</head>
+<body>
+    <header class="hero">
+        <div class="container">
+            <h1 class="hero-title" id="hero-title">Your Apps</h1>
+            <p class="hero-subtitle">Small, focused tools to make your workflows easier.</p>
+        </div>
+    </header>
+
+    <main>
+        <section class="apps-section">
+            <div class="container">
+                <h2 class="section-title">My Apps</h2>
+                <div id="apps-grid" class="apps-grid">
+                    <!-- App cards will be dynamically inserted here by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-text">All your apps in one place.</p>
+            <nav class="footer-links" aria-label="Footer navigation">
+                <a href="#" class="footer-link">GitHub</a>
+                <a href="#" class="footer-link">Email</a>
+            </nav>
+        </div>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "app-host",
+  "version": "1.0.0",
+  "description": "Portfolio website showcasing apps by Akshay Sharma",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "portfolio",
+    "typescript",
+    "vite"
+  ],
+  "author": "Akshay Sharma",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vite": "^5.0.11"
+  }
+}
