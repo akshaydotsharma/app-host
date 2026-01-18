@@ -5,6 +5,7 @@ import {
   renderFooter,
   setupSearch,
   updateAppCount,
+  initScreenshotCarousels,
 } from './renderer';
 import { escapeHtml } from './utils';
 import './style.css';
@@ -84,10 +85,13 @@ function init(): void {
     // Render app cards
     renderApps(apps, 'apps-grid');
 
+    // Initialize screenshot carousels
+    initScreenshotCarousels();
+
     // Update app count
     updateAppCount(apps.length, apps.length);
 
-    // Setup search functionality
+    // Setup search functionality (also re-inits carousels after search)
     setupSearch(apps, 'apps-grid');
 
     // Render footer with config

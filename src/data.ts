@@ -3,6 +3,9 @@ import type { App } from './types';
 /**
  * Portfolio apps data
  * Add new apps to this array to display them on the site
+ *
+ * Screenshots: Add 2-4 screenshots per app in /public/screenshots/
+ * Naming convention: {app-id}-1.png, {app-id}-2.png, etc.
  */
 export const apps: App[] = [
   {
@@ -16,6 +19,11 @@ export const apps: App[] = [
     icon: 'layout-dashboard',
     gradient: 'purple-blue',
     category: 'Productivity',
+    screenshots: [
+      '/screenshots/personal-dashboard-1.png',
+      '/screenshots/personal-dashboard-2.png',
+      '/screenshots/personal-dashboard-3.png',
+    ],
   },
   {
     id: 'meal-planner',
@@ -28,6 +36,11 @@ export const apps: App[] = [
     icon: 'utensils',
     gradient: 'orange-pink',
     category: 'Lifestyle',
+    screenshots: [
+      '/screenshots/meal-planner-1.png',
+      '/screenshots/meal-planner-2.png',
+      '/screenshots/meal-planner-3.png',
+    ],
   },
   {
     id: 'movie-recommendation',
@@ -40,6 +53,11 @@ export const apps: App[] = [
     icon: 'film',
     gradient: 'indigo-purple',
     category: 'Entertainment',
+    screenshots: [
+      '/screenshots/movie-recommendation-1.png',
+      '/screenshots/movie-recommendation-2.png',
+      '/screenshots/movie-recommendation-3.png',
+    ],
   },
   {
     id: 'web-scrape',
@@ -52,6 +70,11 @@ export const apps: App[] = [
     icon: 'globe-scan',
     gradient: 'teal-cyan',
     category: 'Tools',
+    screenshots: [
+      '/screenshots/web-scrape-1.png',
+      '/screenshots/web-scrape-2.png',
+      '/screenshots/web-scrape-3.png',
+    ],
   },
 ];
 

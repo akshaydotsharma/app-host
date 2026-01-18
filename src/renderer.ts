@@ -53,6 +53,63 @@ const linkedinIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24
 const instagramIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>`;
 
 /**
+ * Creates the screenshot carousel HTML
+ */
+function createScreenshotCarousel(
+  app: App,
+  gradient: string
+): string {
+  // If no screenshots, fall back to gradient header with icon
+  if (!app.screenshots || app.screenshots.length === 0) {
+    return `
+      <div class="app-header">
+        <div class="app-header-bg ${escapeHtml(gradient)}"></div>
+        <div class="app-header-decor"></div>
+        <div class="app-header-pattern"></div>
+        <div class="app-icon-wrapper">
+          ${getIcon(app.icon)}
+        </div>
+      </div>
+    `;
+  }
+
+  // Create screenshot slides
+  const slides = app.screenshots
+    .map(
+      (src, index) => `
+      <div class="screenshot-slide ${index === 0 ? 'active' : ''}" data-index="${index}">
+        <img src="${escapeHtml(src)}" alt="${escapeHtml(app.name)} screenshot ${index + 1}" loading="lazy" />
+      </div>
+    `
+    )
+    .join('');
+
+  // Create indicator dots
+  const dots = app.screenshots
+    .map(
+      (_, index) => `
+      <button class="screenshot-dot ${index === 0 ? 'active' : ''}" data-index="${index}" aria-label="View screenshot ${index + 1}"></button>
+    `
+    )
+    .join('');
+
+  return `
+    <div class="app-header screenshot-carousel" data-app-id="${escapeHtml(app.id)}">
+      <div class="app-header-bg ${escapeHtml(gradient)}"></div>
+      <div class="screenshot-slides">
+        ${slides}
+      </div>
+      <div class="screenshot-dots">
+        ${dots}
+      </div>
+      <div class="app-icon-wrapper">
+        ${getIcon(app.icon)}
+      </div>
+    </div>
+  `;
+}
+
+/**
  * Creates an HTML string for a single app card
  */
 export function createAppCard(app: App): string {
@@ -60,16 +117,11 @@ export function createAppCard(app: App): string {
     .map((tech) => `<span class="tech-pill">${escapeHtml(tech)}</span>`)
     .join('');
 
+  const headerHtml = createScreenshotCarousel(app, app.gradient);
+
   return `
     <article class="app-card" data-app-id="${escapeHtml(app.id)}">
-      <div class="app-header">
-        <div class="app-header-bg ${escapeHtml(app.gradient)}"></div>
-        <div class="app-header-decor"></div>
-        <div class="app-header-pattern"></div>
-        <div class="app-icon-wrapper">
-          ${getIcon(app.icon)}
-        </div>
-      </div>
+      ${headerHtml}
       <div class="app-card-content">
         <h3 class="app-name">${escapeHtml(app.name)}</h3>
         <p class="app-tagline">${escapeHtml(app.tagline)}</p>
@@ -191,6 +243,7 @@ export function setupSearch(apps: App[], gridId: string): void {
 
     if (!query) {
       renderApps(apps, gridId);
+      initScreenshotCarousels();
       updateAppCount(apps.length, apps.length);
       return;
     }
@@ -204,6 +257,7 @@ export function setupSearch(apps: App[], gridId: string): void {
     );
 
     renderApps(filtered, gridId);
+    initScreenshotCarousels();
     updateAppCount(filtered.length, apps.length);
   });
 }
@@ -220,4 +274,87 @@ export function updateAppCount(shown: number, total: number): void {
   } else {
     countElement.textContent = `${shown} of ${total} app${total !== 1 ? 's' : ''}`;
   }
+}
+
+/**
+ * Screenshot carousel state
+ */
+const carouselIntervals: Map<string, number> = new Map();
+
+/**
+ * Initializes screenshot carousels with auto-rotation
+ */
+export function initScreenshotCarousels(): void {
+  // Clear any existing intervals
+  carouselIntervals.forEach((interval) => clearInterval(interval));
+  carouselIntervals.clear();
+
+  const carousels = document.querySelectorAll('.screenshot-carousel');
+
+  carousels.forEach((carousel) => {
+    const appId = carousel.getAttribute('data-app-id');
+    if (!appId) return;
+
+    const slides = carousel.querySelectorAll('.screenshot-slide');
+    const dots = carousel.querySelectorAll('.screenshot-dot');
+
+    if (slides.length <= 1) return;
+
+    let currentIndex = 0;
+
+    const showSlide = (index: number) => {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+      });
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+      currentIndex = index;
+    };
+
+    // Auto-rotate every 3 seconds
+    const interval = window.setInterval(() => {
+      const nextIndex = (currentIndex + 1) % slides.length;
+      showSlide(nextIndex);
+    }, 3000);
+
+    carouselIntervals.set(appId, interval);
+
+    // Click handlers for dots
+    dots.forEach((dot) => {
+      dot.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const index = parseInt(
+          (e.currentTarget as HTMLElement).getAttribute('data-index') || '0',
+          10
+        );
+        showSlide(index);
+
+        // Reset interval on manual click
+        clearInterval(carouselIntervals.get(appId));
+        const newInterval = window.setInterval(() => {
+          const nextIndex = (currentIndex + 1) % slides.length;
+          showSlide(nextIndex);
+        }, 3000);
+        carouselIntervals.set(appId, newInterval);
+      });
+    });
+
+    // Pause on hover (optional UX improvement)
+    carousel.addEventListener('mouseenter', () => {
+      const existingInterval = carouselIntervals.get(appId);
+      if (existingInterval) {
+        clearInterval(existingInterval);
+      }
+    });
+
+    carousel.addEventListener('mouseleave', () => {
+      const newInterval = window.setInterval(() => {
+        const nextIndex = (currentIndex + 1) % slides.length;
+        showSlide(nextIndex);
+      }, 3000);
+      carouselIntervals.set(appId, newInterval);
+    });
+  });
 }

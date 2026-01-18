@@ -44,4 +44,6 @@ export interface App {
   gradient: GradientPreset;
   /** Optional category for filtering */
   category?: string;
+  /** Array of screenshot URLs for animated preview */
+  screenshots?: string[];
 }
