@@ -18,6 +18,13 @@ export const apps: App[] = [
     url: "https://meal-planner-g4wy.onrender.com",
     description: "A simple tool to plan your weekly meals, manage recipes, and organize your grocery shopping. Takes the stress out of deciding what to eat.",
     techStack: "JavaScript SPA deployed on Render"
+  },
+  {
+    name: "Movie Recommendation",
+    tagline: "Discover your next favorite film",
+    url: "https://movie-recommendation-8szt.onrender.com",
+    description: "Get personalized movie suggestions based on your mood, genre preferences, and viewing history. Powered by TMDB with watchlists and ratings.",
+    techStack: "Next.js 15, TypeScript, PostgreSQL, Prisma, TMDB API"
   }
   // Add more apps here:
   // {
