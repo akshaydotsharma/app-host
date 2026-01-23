@@ -28,12 +28,12 @@ function getIcon(icon: AppIcon): string {
 const arrowIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>`;
 
 /**
- * GitHub icon for footer
+ * GitHub icon
  */
 const githubIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>`;
 
 /**
- * Email icon for footer
+ * Email icon
  */
 const emailIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>`;
 
@@ -51,6 +51,26 @@ const linkedinIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24
  * Instagram icon
  */
 const instagramIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>`;
+
+/**
+ * Menu icon for mobile nav
+ */
+const menuIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>`;
+
+/**
+ * Close icon for mobile nav
+ */
+const closeIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>`;
+
+/**
+ * Empty/search icon for no results state
+ */
+const emptySearchIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M8 8h6"/></svg>`;
+
+/**
+ * Chevron down icon for sort dropdown
+ */
+const chevronDownIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`;
 
 /**
  * Creates the screenshot carousel HTML
@@ -84,26 +104,11 @@ function createScreenshotCarousel(
     )
     .join('');
 
-  // Create indicator dots
-  const dots = app.screenshots
-    .map(
-      (_, index) => `
-      <button class="screenshot-dot ${index === 0 ? 'active' : ''}" data-index="${index}" aria-label="View screenshot ${index + 1}"></button>
-    `
-    )
-    .join('');
-
   return `
     <div class="app-header screenshot-carousel" data-app-id="${escapeHtml(app.id)}">
       <div class="app-header-bg ${escapeHtml(gradient)}"></div>
       <div class="screenshot-slides">
         ${slides}
-      </div>
-      <div class="screenshot-dots">
-        ${dots}
-      </div>
-      <div class="app-icon-wrapper">
-        ${getIcon(app.icon)}
       </div>
     </div>
   `;
@@ -113,22 +118,15 @@ function createScreenshotCarousel(
  * Creates an HTML string for a single app card
  */
 export function createAppCard(app: App): string {
-  const techPills = app.techStack
-    .map((tech) => `<span class="tech-pill">${escapeHtml(tech)}</span>`)
-    .join('');
-
   const headerHtml = createScreenshotCarousel(app, app.gradient);
 
   return `
-    <article class="app-card" data-app-id="${escapeHtml(app.id)}">
+    <article class="app-card" data-app-id="${escapeHtml(app.id)}" data-category="${escapeHtml(app.category || '')}">
       ${headerHtml}
       <div class="app-card-content">
         <h3 class="app-name">${escapeHtml(app.name)}</h3>
         <p class="app-tagline">${escapeHtml(app.tagline)}</p>
         <p class="app-description">${escapeHtml(app.description)}</p>
-        <div class="app-tech-stack">
-          ${techPills}
-        </div>
         <a
           href="${escapeHtml(app.url)}"
           class="app-button"
@@ -149,6 +147,7 @@ export function createAppCard(app: App): string {
  */
 export function renderApps(apps: App[], containerId: string): void {
   const appsGrid = document.getElementById(containerId);
+  const emptyState = document.getElementById('empty-state');
 
   if (!appsGrid) {
     console.error(`Container element with id "${containerId}" not found`);
@@ -156,9 +155,15 @@ export function renderApps(apps: App[], containerId: string): void {
   }
 
   if (apps.length === 0) {
-    appsGrid.innerHTML =
-      '<p class="no-apps">No apps available yet. Check back soon!</p>';
+    appsGrid.innerHTML = '';
+    if (emptyState) {
+      emptyState.style.display = 'flex';
+    }
     return;
+  }
+
+  if (emptyState) {
+    emptyState.style.display = 'none';
   }
 
   const appsHtml = apps.map((app) => createAppCard(app)).join('');
@@ -166,28 +171,172 @@ export function renderApps(apps: App[], containerId: string): void {
 }
 
 /**
- * Renders the search/filter section
+ * Renders the navigation bar
  */
-export function renderFilterSection(containerId: string): void {
+export function renderNavBar(
+  containerId: string,
+  config: {
+    brand: string;
+    tagline: string;
+    github: string;
+  }
+): void {
   const container = document.getElementById(containerId);
   if (!container) return;
 
   container.innerHTML = `
-    <div class="search-wrapper">
-      <span class="search-icon">${searchIcon}</span>
-      <input
-        type="text"
-        class="search-input"
-        id="app-search"
-        placeholder="Search apps by name or tech..."
-        aria-label="Search apps"
-      >
+    <div class="container">
+      <div class="nav-inner">
+        <div class="nav-links" id="nav-links">
+          <a href="#" class="nav-link active">Apps</a>
+          <a href="${escapeHtml(config.github)}" class="nav-link" target="_blank" rel="noopener noreferrer">About</a>
+          <a href="#footer" class="nav-link">Contact</a>
+          <a href="${escapeHtml(config.github)}" class="nav-icon-link" target="_blank" rel="noopener noreferrer" aria-label="View on GitHub">
+            ${githubIcon}
+          </a>
+        </div>
+        <button class="nav-menu-btn" id="nav-menu-btn" aria-label="Toggle menu" aria-expanded="false">
+          ${menuIcon}
+        </button>
+      </div>
     </div>
   `;
+
+  // Setup mobile menu toggle
+  setupMobileMenu();
+
+  // Setup scroll listener for nav background
+  setupNavScroll(container);
 }
 
 /**
- * Renders the footer with GitHub, Email, LinkedIn, Instagram, and copyright
+ * Setup mobile menu toggle
+ */
+function setupMobileMenu(): void {
+  const menuBtn = document.getElementById('nav-menu-btn');
+  const navLinks = document.getElementById('nav-links');
+
+  if (!menuBtn || !navLinks) return;
+
+  let isOpen = false;
+
+  menuBtn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    navLinks.classList.toggle('open', isOpen);
+    menuBtn.setAttribute('aria-expanded', String(isOpen));
+    menuBtn.innerHTML = isOpen ? closeIcon : menuIcon;
+  });
+
+  // Close menu when clicking a link
+  navLinks.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    if (target.classList.contains('nav-link') || target.classList.contains('nav-icon-link')) {
+      isOpen = false;
+      navLinks.classList.remove('open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+      menuBtn.innerHTML = menuIcon;
+    }
+  });
+}
+
+/**
+ * Setup scroll listener for nav background effect
+ */
+function setupNavScroll(navBar: HTMLElement): void {
+  let ticking = false;
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        if (window.scrollY > 20) {
+          navBar.classList.add('scrolled');
+        } else {
+          navBar.classList.remove('scrolled');
+        }
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+}
+
+/**
+ * Gets unique categories from apps
+ */
+export function getCategories(apps: App[]): { name: string; count: number }[] {
+  const categoryMap = new Map<string, number>();
+
+  apps.forEach((app) => {
+    const category = app.category || 'Other';
+    categoryMap.set(category, (categoryMap.get(category) || 0) + 1);
+  });
+
+  return Array.from(categoryMap.entries())
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count);
+}
+
+/**
+ * Renders the search/filter section
+ */
+export function renderFilterSection(containerId: string, apps: App[]): void {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const categories = getCategories(apps);
+
+  const categoryButtons = categories
+    .map(
+      (cat) => `
+      <button class="category-btn" data-category="${escapeHtml(cat.name)}">
+        ${escapeHtml(cat.name)}
+        <span class="category-count">${cat.count}</span>
+      </button>
+    `
+    )
+    .join('');
+
+  container.innerHTML = `
+    <div class="filter-inner">
+      <div class="filter-row">
+        <div class="search-wrapper">
+          <span class="search-icon">${searchIcon}</span>
+          <input
+            type="text"
+            class="search-input"
+            id="app-search"
+            placeholder="Search apps..."
+            aria-label="Search apps"
+          >
+        </div>
+        <div class="category-filters">
+          <button class="category-btn active" data-category="all">
+            All
+            <span class="category-count">${apps.length}</span>
+          </button>
+          ${categoryButtons}
+        </div>
+        <div class="sort-wrapper">
+          <select class="sort-select" id="sort-select" aria-label="Sort apps">
+            <option value="default">Default order</option>
+            <option value="name-asc">Name (A-Z)</option>
+            <option value="name-desc">Name (Z-A)</option>
+          </select>
+          <span class="sort-icon">${chevronDownIcon}</span>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Setup empty state
+  const emptyStateIcon = document.getElementById('empty-state-icon');
+  if (emptyStateIcon) {
+    emptyStateIcon.innerHTML = emptySearchIcon;
+  }
+}
+
+/**
+ * Renders the footer
  */
 export function renderFooter(
   containerId: string,
@@ -197,6 +346,7 @@ export function renderFooter(
     linkedin: string;
     instagram: string;
     brand: string;
+    tagline: string;
   }
 ): void {
   const container = document.getElementById(containerId);
@@ -207,7 +357,6 @@ export function renderFooter(
   container.innerHTML = `
     <div class="container">
       <div class="footer-inner">
-        <p class="footer-copyright">&copy; ${currentYear} ${escapeHtml(config.brand)}. All rights reserved.</p>
         <nav class="footer-links" aria-label="Footer navigation">
           <a href="${escapeHtml(config.github)}" class="footer-link" target="_blank" rel="noopener noreferrer">
             ${githubIcon}
@@ -223,43 +372,116 @@ export function renderFooter(
           </a>
           <a href="mailto:${escapeHtml(config.email)}" class="footer-link">
             ${emailIcon}
-            ${escapeHtml(config.email)}
+            Email
           </a>
         </nav>
+        <p class="footer-copyright">&copy; ${currentYear} All rights reserved.</p>
       </div>
     </div>
   `;
 }
 
 /**
- * Sets up search functionality
+ * Sets up search, filter, and sort functionality
  */
-export function setupSearch(apps: App[], gridId: string): void {
+export function setupFilters(
+  gridId: string,
+  originalApps: App[]
+): void {
   const searchInput = document.getElementById('app-search') as HTMLInputElement;
-  if (!searchInput) return;
+  const categoryBtns = document.querySelectorAll('.category-btn');
+  const sortSelect = document.getElementById('sort-select') as HTMLSelectElement;
+  const emptyStateBtn = document.getElementById('empty-state-btn');
 
-  searchInput.addEventListener('input', (e) => {
-    const query = (e.target as HTMLInputElement).value.toLowerCase().trim();
+  let currentCategory = 'all';
+  let currentSearch = '';
+  let currentSort = 'default';
 
-    if (!query) {
-      renderApps(apps, gridId);
-      initScreenshotCarousels();
-      updateAppCount(apps.length, apps.length);
-      return;
+  const filterAndRender = () => {
+    let filtered = [...originalApps];
+
+    // Filter by category
+    if (currentCategory !== 'all') {
+      filtered = filtered.filter((app) => app.category === currentCategory);
     }
 
-    const filtered = apps.filter(
-      (app) =>
-        app.name.toLowerCase().includes(query) ||
-        app.tagline.toLowerCase().includes(query) ||
-        app.techStack.some((tech) => tech.toLowerCase().includes(query)) ||
-        (app.category && app.category.toLowerCase().includes(query))
-    );
+    // Filter by search
+    if (currentSearch) {
+      const query = currentSearch.toLowerCase();
+      filtered = filtered.filter(
+        (app) =>
+          app.name.toLowerCase().includes(query) ||
+          app.tagline.toLowerCase().includes(query) ||
+          app.techStack.some((tech) => tech.toLowerCase().includes(query)) ||
+          (app.category && app.category.toLowerCase().includes(query))
+      );
+    }
+
+    // Sort
+    switch (currentSort) {
+      case 'name-asc':
+        filtered.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'name-desc':
+        filtered.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      default:
+        // Keep original order
+        break;
+    }
 
     renderApps(filtered, gridId);
     initScreenshotCarousels();
-    updateAppCount(filtered.length, apps.length);
+    updateAppCount(filtered.length, originalApps.length);
+  };
+
+  // Search input handler
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      currentSearch = (e.target as HTMLInputElement).value.trim();
+      filterAndRender();
+    });
+  }
+
+  // Category button handlers
+  categoryBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const category = btn.getAttribute('data-category') || 'all';
+      currentCategory = category;
+
+      // Update active state
+      categoryBtns.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      filterAndRender();
+    });
   });
+
+  // Sort select handler
+  if (sortSelect) {
+    sortSelect.addEventListener('change', (e) => {
+      currentSort = (e.target as HTMLSelectElement).value;
+      filterAndRender();
+    });
+  }
+
+  // Clear filters button
+  if (emptyStateBtn) {
+    emptyStateBtn.addEventListener('click', () => {
+      currentCategory = 'all';
+      currentSearch = '';
+      currentSort = 'default';
+
+      if (searchInput) searchInput.value = '';
+      if (sortSelect) sortSelect.value = 'default';
+
+      categoryBtns.forEach((btn) => {
+        btn.classList.toggle('active', btn.getAttribute('data-category') === 'all');
+      });
+
+      filterAndRender();
+    });
+  }
 }
 
 /**
@@ -267,12 +489,18 @@ export function setupSearch(apps: App[], gridId: string): void {
  */
 export function updateAppCount(shown: number, total: number): void {
   const countElement = document.getElementById('app-count');
-  if (!countElement) return;
+  const emptyStateText = document.getElementById('empty-state-text');
 
-  if (shown === total) {
-    countElement.textContent = `${total} app${total !== 1 ? 's' : ''}`;
-  } else {
-    countElement.textContent = `${shown} of ${total} app${total !== 1 ? 's' : ''}`;
+  if (countElement) {
+    if (shown === total) {
+      countElement.textContent = `${total} app${total !== 1 ? 's' : ''}`;
+    } else {
+      countElement.textContent = `${shown} of ${total} app${total !== 1 ? 's' : ''}`;
+    }
+  }
+
+  if (emptyStateText && shown === 0) {
+    emptyStateText.textContent = 'No apps match your filters';
   }
 }
 
@@ -296,7 +524,6 @@ export function initScreenshotCarousels(): void {
     if (!appId) return;
 
     const slides = carousel.querySelectorAll('.screenshot-slide');
-    const dots = carousel.querySelectorAll('.screenshot-dot');
 
     if (slides.length <= 1) return;
 
@@ -305,9 +532,6 @@ export function initScreenshotCarousels(): void {
     const showSlide = (index: number) => {
       slides.forEach((slide, i) => {
         slide.classList.toggle('active', i === index);
-      });
-      dots.forEach((dot, i) => {
-        dot.classList.toggle('active', i === index);
       });
       currentIndex = index;
     };
@@ -320,28 +544,7 @@ export function initScreenshotCarousels(): void {
 
     carouselIntervals.set(appId, interval);
 
-    // Click handlers for dots
-    dots.forEach((dot) => {
-      dot.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const index = parseInt(
-          (e.currentTarget as HTMLElement).getAttribute('data-index') || '0',
-          10
-        );
-        showSlide(index);
-
-        // Reset interval on manual click
-        clearInterval(carouselIntervals.get(appId));
-        const newInterval = window.setInterval(() => {
-          const nextIndex = (currentIndex + 1) % slides.length;
-          showSlide(nextIndex);
-        }, 3000);
-        carouselIntervals.set(appId, newInterval);
-      });
-    });
-
-    // Pause on hover (optional UX improvement)
+    // Pause on hover
     carousel.addEventListener('mouseenter', () => {
       const existingInterval = carouselIntervals.get(appId);
       if (existingInterval) {
@@ -358,3 +561,6 @@ export function initScreenshotCarousels(): void {
     });
   });
 }
+
+// Keep old function name for backwards compatibility
+export const setupSearch = setupFilters;

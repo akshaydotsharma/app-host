@@ -5,31 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Your personal app dashboard - all your tools in one place.">
     <meta name="theme-color" content="#0a0a0f">
-    <title>My Apps</title>
+    <title>My Wall</title>
     <!-- Inter font for modern typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Top Navigation Bar -->
+    <nav class="nav-bar" id="nav-bar">
+        <!-- Navigation content rendered by JS -->
+    </nav>
+
+    <!-- Hero Section -->
     <header class="hero">
         <div class="container">
             <div class="hero-inner">
                 <div class="hero-content">
-                    <h1 class="hero-title" id="hero-title">My Apps</h1>
-                    <p class="hero-subtitle">Small, focused tools to make workflows easier.</p>
-                </div>
-                <div class="hero-actions" id="hero-actions">
-                    <!-- Hero action links rendered by JS -->
+                    <h1 class="hero-title" id="hero-title">My Wall</h1>
+                    <p class="hero-subtitle" id="hero-subtitle">Small, focused tools to make workflows easier.</p>
                 </div>
             </div>
         </div>
     </header>
 
+    <!-- Filter/Search Section -->
     <section class="filter-section">
         <div class="container">
             <div id="filter-container">
-                <!-- Search input rendered by JS -->
+                <!-- Search and filters rendered by JS -->
             </div>
         </div>
     </section>
@@ -38,11 +42,17 @@
         <section class="apps-section">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title">All Apps</h2>
+                    <h2 class="section-title">Browse Apps</h2>
                     <span class="app-count" id="app-count"></span>
                 </div>
                 <div id="apps-grid" class="apps-grid">
                     <!-- App cards will be dynamically inserted here by JavaScript -->
+                </div>
+                <!-- Empty state for no results -->
+                <div class="empty-state" id="empty-state" style="display: none;">
+                    <div class="empty-state-icon" id="empty-state-icon"></div>
+                    <p class="empty-state-text" id="empty-state-text">No apps found</p>
+                    <button class="empty-state-btn" id="empty-state-btn">Clear filters</button>
                 </div>
             </div>
         </section>

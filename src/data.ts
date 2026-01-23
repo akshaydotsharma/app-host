@@ -21,8 +21,6 @@ export const apps: App[] = [
     category: 'Productivity',
     screenshots: [
       '/screenshots/personal-dashboard-1.png',
-      '/screenshots/personal-dashboard-2.png',
-      '/screenshots/personal-dashboard-3.png',
     ],
   },
   {
@@ -38,8 +36,6 @@ export const apps: App[] = [
     category: 'Lifestyle',
     screenshots: [
       '/screenshots/meal-planner-1.png',
-      '/screenshots/meal-planner-2.png',
-      '/screenshots/meal-planner-3.png',
     ],
   },
   {
@@ -55,8 +51,6 @@ export const apps: App[] = [
     category: 'Entertainment',
     screenshots: [
       '/screenshots/movie-recommendation-1.png',
-      '/screenshots/movie-recommendation-2.png',
-      '/screenshots/movie-recommendation-3.png',
     ],
   },
   {
@@ -72,8 +66,6 @@ export const apps: App[] = [
     category: 'Tools',
     screenshots: [
       '/screenshots/web-scrape-1.png',
-      '/screenshots/web-scrape-2.png',
-      '/screenshots/web-scrape-3.png',
     ],
   },
 ];
@@ -82,7 +74,7 @@ export const apps: App[] = [
  * Site configuration
  */
 export const siteConfig = {
-  title: 'My Apps',
+  title: 'My Wall',
   subtitle: 'Small, focused tools to make workflows easier.',
   github: 'https://github.com/akshaydotsharma',
   email: 'sharma.akshay.mi@gmail.com',
